@@ -24,7 +24,7 @@ function relativeAge(date: string) {
 }
 
 function shortSha(deployment: DeploymentCard) {
-  return deployment.commitSha ? deployment.commitSha.slice(0, 7) : "unknown";
+  return deployment.commitSha ? deployment.commitSha.slice(0, 7) : null;
 }
 
 export function ProjectPanel({ project }: { project: ProjectDeploymentGroup }) {
@@ -46,14 +46,17 @@ export function ProjectPanel({ project }: { project: ProjectDeploymentGroup }) {
                 to="/deployment/$deploymentId"
                 params={{ deploymentId: deployment.id }}
                 className="deployment-name"
+                title={deployment.serviceName}
               >
                 {deployment.serviceName}
               </Link>
-              <span className="environment">{deployment.environmentName}</span>
+              <span className="environment" title={deployment.environmentName}>
+                {deployment.environmentName}
+              </span>
             </div>
             <div className="deployment-meta">
-              <span>{deployment.branch ?? "no branch"}</span>
-              <span>{shortSha(deployment)}</span>
+              {deployment.branch ? <span>{deployment.branch}</span> : null}
+              {shortSha(deployment) ? <span>{shortSha(deployment)}</span> : null}
               <span>{relativeAge(deployment.createdAt)}</span>
               <a
                 href={deployment.railwayUrl}
@@ -65,7 +68,9 @@ export function ProjectPanel({ project }: { project: ProjectDeploymentGroup }) {
               </a>
             </div>
             {deployment.commitMessage ? (
-              <p className="commit-message">{deployment.commitMessage}</p>
+              <p className="commit-message" title={deployment.commitMessage}>
+                {deployment.commitMessage}
+              </p>
             ) : null}
           </article>
         ))}

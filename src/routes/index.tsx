@@ -14,34 +14,44 @@ export const Route = createFileRoute("/")({
   component: DashboardPage,
 });
 
-function statusesForFilter(filter: StatusFilter): DeploymentStatus[] | undefined {
+const livePollMs = 5_000;
+
+function statusMatchesFilter(status: DeploymentStatus, filter: StatusFilter) {
   if (filter === "active") {
-    return ["BUILDING", "DEPLOYING", "QUEUED", "WAITING"];
+    return ["BUILDING", "DEPLOYING", "QUEUED", "WAITING"].includes(status);
   }
 
   if (filter === "problems") {
-    return ["FAILED", "CRASHED"];
+    return ["FAILED", "CRASHED"].includes(status);
   }
 
   if (filter === "success") {
-    return ["SUCCESS"];
+    return status === "SUCCESS";
   }
 
-  return undefined;
+  return true;
 }
 
-function filterProjects(projects: ProjectDeploymentGroup[], search: string) {
+function filterProjects(
+  projects: ProjectDeploymentGroup[],
+  search: string,
+  statusFilter: StatusFilter,
+) {
   const query = search.trim().toLowerCase();
-
-  if (!query) {
-    return projects;
-  }
 
   return projects
     .map((project) => ({
       ...project,
-      deployments: project.deployments.filter((deployment) =>
-        [
+      deployments: project.deployments.filter((deployment) => {
+        if (!statusMatchesFilter(deployment.status, statusFilter)) {
+          return false;
+        }
+
+        if (!query) {
+          return true;
+        }
+
+        return [
           project.name,
           deployment.serviceName,
           deployment.environmentName,
@@ -50,8 +60,8 @@ function filterProjects(projects: ProjectDeploymentGroup[], search: string) {
           deployment.commitMessage,
         ]
           .filter(Boolean)
-          .some((value) => String(value).toLowerCase().includes(query)),
-      ),
+          .some((value) => String(value).toLowerCase().includes(query));
+      }),
     }))
     .filter((project) => project.deployments.length > 0);
 }
@@ -68,28 +78,35 @@ function DashboardPage() {
   });
 
   const dashboardQuery = useQuery({
-    queryKey: ["railway", "dashboard", selectedWorkspace, statusFilter],
+    queryKey: ["railway", "dashboard", selectedWorkspace],
     queryFn: () =>
       orpc.railway.dashboard({
         workspaceIds: selectedWorkspace ? [selectedWorkspace] : undefined,
-        statusFilter: statusesForFilter(statusFilter),
       }),
     enabled: viewerQuery.isSuccess,
-    staleTime: 10_000,
-    refetchInterval: (query) => (query.state.error ? false : 20_000),
+    staleTime: 2_000,
+    refetchInterval: (query) => (query.state.error ? false : livePollMs),
     refetchIntervalInBackground: false,
     retry: 1,
   });
 
   const visibleProjects = useMemo(
-    () => filterProjects(dashboardQuery.data?.projects ?? [], search),
-    [dashboardQuery.data?.projects, search],
+    () => filterProjects(dashboardQuery.data?.projects ?? [], search, statusFilter),
+    [dashboardQuery.data?.projects, search, statusFilter],
   );
 
   async function signOut() {
     await authClient.signOut();
     window.location.href = "/login";
   }
+
+  const fetchedAt = dashboardQuery.data?.fetchedAt
+    ? new Date(dashboardQuery.data.fetchedAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+    : null;
 
   if (viewerQuery.error) {
     return (
@@ -115,6 +132,11 @@ function DashboardPage() {
           </div>
         </div>
         <div className="topbar-actions">
+          <span className="live-pill" title="Refreshes every 5 seconds while this tab is visible">
+            <span />
+            Live 5s
+          </span>
+          {fetchedAt ? <span className="sync-time">Updated {fetchedAt}</span> : null}
           <button type="button" className="icon-button" onClick={() => dashboardQuery.refetch()}>
             <RefreshCw size={17} />
             Refresh
@@ -163,8 +185,12 @@ function DashboardPage() {
         </section>
       ) : (
         <section className="empty-state">
-          <h2>No deployments found</h2>
-          <p>Push to a connected Railway project or adjust the filters.</p>
+          <h2>{statusFilter === "active" ? "No active deployments" : "No deployments found"}</h2>
+          <p>
+            {statusFilter === "active"
+              ? "The live dashboard will surface builds, deploys, queued, and waiting deployments here."
+              : "Push to a connected Railway project or adjust the filters."}
+          </p>
         </section>
       )}
     </main>

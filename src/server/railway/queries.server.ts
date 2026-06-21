@@ -63,6 +63,49 @@ function railwayDeploymentUrl(projectId: string, serviceId: string, deploymentId
   return `https://railway.com/project/${projectId}/service/${serviceId}?deploymentId=${deploymentId}`;
 }
 
+function metaString(meta: RailwayDeployment["meta"], keys: string[]) {
+  for (const key of keys) {
+    const value = meta?.[key];
+
+    if (typeof value === "string" && value.trim()) {
+      return value;
+    }
+  }
+
+  return undefined;
+}
+
+function deploymentBranch(deployment: RailwayDeployment) {
+  return metaString(deployment.meta, [
+    "branch",
+    "branchName",
+    "sourceBranch",
+    "repoBranch",
+    "githubBranch",
+  ]);
+}
+
+function deploymentCommitSha(deployment: RailwayDeployment) {
+  return metaString(deployment.meta, [
+    "commitSha",
+    "commitSHA",
+    "commitHash",
+    "commit",
+    "sha",
+    "githubCommitSha",
+  ]);
+}
+
+function deploymentCommitMessage(deployment: RailwayDeployment) {
+  return metaString(deployment.meta, [
+    "commitMessage",
+    "commitTitle",
+    "message",
+    "sourceMessage",
+    "githubCommitMessage",
+  ]);
+}
+
 async function mapLimit<T, R>(items: T[], limit: number, mapper: (item: T) => Promise<R>) {
   const results: R[] = [];
   const executing = new Set<Promise<void>>();
@@ -262,9 +305,9 @@ export async function getDeployment(
     projectName: project.name,
     workspaceId: workspace.id,
     workspaceName: workspace.name,
-    branch: deployment.meta?.branch,
-    commitSha: deployment.meta?.commitSha,
-    commitMessage: deployment.meta?.commitMessage,
+    branch: deploymentBranch(deployment),
+    commitSha: deploymentCommitSha(deployment),
+    commitMessage: deploymentCommitMessage(deployment),
     createdAt: deployment.createdAt,
     updatedAt: deployment.updatedAt,
     railwayUrl: railwayDeploymentUrl(project.id, service.id, deployment.id),
@@ -352,9 +395,9 @@ export async function getDashboard(
           projectName: overview.name,
           workspaceId: workspace.id,
           workspaceName: workspace.name,
-          branch: deployment.meta?.branch,
-          commitSha: deployment.meta?.commitSha,
-          commitMessage: deployment.meta?.commitMessage,
+          branch: deploymentBranch(deployment),
+          commitSha: deploymentCommitSha(deployment),
+          commitMessage: deploymentCommitMessage(deployment),
           createdAt: deployment.createdAt,
           updatedAt: deployment.updatedAt,
           railwayUrl: railwayDeploymentUrl(overview.id, service.id, deployment.id),

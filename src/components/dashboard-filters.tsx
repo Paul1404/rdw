@@ -3,6 +3,13 @@ import type { WorkspaceSummary } from "../shared/railway/types";
 
 export type StatusFilter = "all" | "active" | "problems" | "success";
 
+const statusLabels: Record<StatusFilter, string> = {
+  all: "All",
+  active: "Active",
+  problems: "Problems",
+  success: "Success",
+};
+
 export function DashboardFilters({
   search,
   onSearchChange,
@@ -38,7 +45,7 @@ export function DashboardFilters({
             key={value}
             onClick={() => onStatusFilterChange(value)}
           >
-            {value}
+            {statusLabels[value]}
           </button>
         ))}
       </fieldset>

@@ -100,6 +100,22 @@ a {
   gap: 10px;
 }
 
+.topbar-brand {
+  gap: 12px;
+  min-width: 0;
+}
+
+.topbar-brand h1 {
+  line-height: 1;
+}
+
+.topbar-brand p {
+  max-width: min(42vw, 420px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .topbar h1,
 .detail-hero h1,
 .settings-panel h1,
@@ -125,6 +141,11 @@ a {
   display: block;
   flex: 0 0 auto;
   object-fit: contain;
+}
+
+.topbar-brand .brand-asset {
+  width: 38px;
+  height: 38px;
 }
 
 .brand-mark-sm {
@@ -194,6 +215,35 @@ a {
   background: var(--panel-strong);
 }
 
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--green) 34%, var(--line));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--green-bg) 52%, var(--panel));
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.live-pill span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--green);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--green) 16%, transparent);
+}
+
+.sync-time {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .settings-link {
   position: fixed;
   right: 16px;
@@ -203,7 +253,7 @@ a {
 
 .summary-strip {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 10px;
   margin: 12px 0;
 }
@@ -286,7 +336,7 @@ a {
 
 .segmented button.selected,
 .logs-tabs button.selected {
-  background: var(--panel-strong);
+  background: color-mix(in srgb, var(--accent) 13%, var(--panel-strong));
   color: var(--text);
 }
 
@@ -350,7 +400,7 @@ a {
 }
 
 .deployment-row {
-  padding: 12px 14px;
+  padding: 13px 14px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -359,7 +409,10 @@ a {
 }
 
 .deployment-main {
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) max-content;
+  column-gap: 10px;
+  align-items: center;
 }
 
 .deployment-name {
@@ -372,23 +425,36 @@ a {
 }
 
 .environment {
+  overflow: hidden;
   color: var(--muted);
   font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .deployment-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-top: 8px;
   color: var(--muted);
   font-size: 12px;
 }
 
+.deployment-meta a {
+  display: inline-flex;
+  align-items: center;
+}
+
 .commit-message {
   margin: 8px 0 0;
   color: var(--muted);
+  display: -webkit-box;
   overflow: hidden;
   font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .status {
@@ -659,6 +725,10 @@ a {
 
   .topbar-actions {
     flex-wrap: wrap;
+  }
+
+  .topbar-brand p {
+    max-width: 100%;
   }
 }
 
