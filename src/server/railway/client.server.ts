@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/server";
+import { logger } from "../logger.server";
 
 export const RAILWAY_GRAPHQL_URL = "https://backboard.railway.com/graphql/v2";
 
@@ -12,6 +13,7 @@ export async function railwayGraphql<T>(
   query: string,
   variables: Record<string, unknown> = {},
 ): Promise<T> {
+  const operationName = query.match(/\b(?:query|mutation)\s+(\w+)/)?.[1] ?? "anonymous";
   const response = await fetch(RAILWAY_GRAPHQL_URL, {
     method: "POST",
     headers: {
@@ -22,14 +24,26 @@ export async function railwayGraphql<T>(
   });
 
   if (!response.ok) {
+    const responseBody = await response.text();
+    logger.error("railway.api.http_error", {
+      operationName,
+      status: response.status,
+      responseBody: responseBody.slice(0, 2_000),
+      variables,
+    });
     throw new ORPCError("RAILWAY_API_FAILED", {
-      message: `Railway API returned HTTP ${response.status}`,
+      message: `Railway API returned HTTP ${response.status}: ${responseBody.slice(0, 300)}`,
     });
   }
 
   const payload = (await response.json()) as GraphqlResponse<T>;
 
   if (payload.errors?.length) {
+    logger.error("railway.api.graphql_error", {
+      operationName,
+      errors: payload.errors,
+      variables,
+    });
     throw new ORPCError("RAILWAY_API_FAILED", {
       message: payload.errors.map((error) => error.message).join("; "),
     });

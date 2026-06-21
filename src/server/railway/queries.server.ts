@@ -87,35 +87,20 @@ export async function listAuthorizedWorkspaces(userId: string): Promise<Workspac
   const accessToken = await getValidRailwayAccessToken(userId);
 
   const data = await railwayGraphql<{
-    externalWorkspaces?: Connection<RailwayWorkspace>;
-    me?: { workspaces?: Connection<RailwayWorkspace> };
+    me?: { workspaces?: RailwayWorkspace[] };
   }>(
     accessToken,
     `query AuthorizedWorkspaces {
-      externalWorkspaces {
-        edges {
-          node {
-            id
-            name
-          }
-        }
-      }
       me {
         workspaces {
-          edges {
-            node {
-              id
-              name
-            }
-          }
+          id
+          name
         }
       }
     }`,
   );
 
-  const workspaces = nodes(data.externalWorkspaces).length
-    ? nodes(data.externalWorkspaces)
-    : nodes(data.me?.workspaces);
+  const workspaces = data.me?.workspaces ?? [];
 
   const now = new Date();
   await Promise.all(
@@ -147,7 +132,6 @@ export async function listProjectsForWorkspace(userId: string, workspaceId: stri
 
   const data = await railwayGraphql<{
     projects?: Connection<RailwayProject>;
-    workspace?: { projects?: Connection<RailwayProject> };
   }>(
     accessToken,
     `query ProjectsForWorkspace($workspaceId: String!) {
@@ -159,21 +143,11 @@ export async function listProjectsForWorkspace(userId: string, workspaceId: stri
           }
         }
       }
-      workspace(id: $workspaceId) {
-        projects {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
-      }
     }`,
     { workspaceId },
   );
 
-  return nodes(data.projects).length ? nodes(data.projects) : nodes(data.workspace?.projects);
+  return nodes(data.projects);
 }
 
 export async function getProjectOverview(userId: string, projectId: string) {
@@ -211,6 +185,7 @@ export async function getProjectOverview(userId: string, projectId: string) {
 
 export async function listDeployments(
   userId: string,
+  projectId: string,
   serviceId: string,
   environmentId: string,
 ): Promise<RailwayDeployment[]> {
@@ -218,8 +193,8 @@ export async function listDeployments(
 
   const data = await railwayGraphql<{ deployments?: Connection<RailwayDeployment> }>(
     accessToken,
-    `query Deployments($serviceId: String!, $environmentId: String!) {
-      deployments(first: 1, input: { serviceId: $serviceId, environmentId: $environmentId }) {
+    `query Deployments($projectId: String!, $serviceId: String!, $environmentId: String!) {
+      deployments(first: 1, input: { projectId: $projectId, serviceId: $serviceId, environmentId: $environmentId }) {
         edges {
           node {
             id
@@ -233,7 +208,7 @@ export async function listDeployments(
         }
       }
     }`,
-    { serviceId, environmentId },
+    { projectId, serviceId, environmentId },
   );
 
   return nodes(data.deployments);
@@ -360,7 +335,7 @@ export async function getDashboard(
 
     const deployments: DeploymentCard[] = (
       await mapLimit(deploymentInputs, 5, async ({ service, environment }) => {
-        const [deployment] = await listDeployments(userId, service.id, environment.id);
+        const [deployment] = await listDeployments(userId, overview.id, service.id, environment.id);
 
         if (!deployment) {
           return null;

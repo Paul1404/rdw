@@ -19,6 +19,10 @@ const minimumLevel = levelRank[configuredLevel] ? configuredLevel : "info";
 const sensitiveKeyPattern = /authorization|cookie|secret|token|password|key|database_url/i;
 
 function shouldLog(level: LogLevel) {
+  if (process.env.NODE_ENV === "test") {
+    return false;
+  }
+
   return levelRank[level] >= levelRank[minimumLevel];
 }
 
