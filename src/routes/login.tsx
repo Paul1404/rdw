@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BrandLockup, BrandMark } from "../components/brand";
+import { BrandMark } from "../components/brand";
 import { authClient, railwayScopes } from "../lib/auth-client";
 
 export const Route = createFileRoute("/login")({
@@ -20,7 +20,10 @@ function LoginPage() {
     <main className="login-page">
       <section className="login-panel">
         <BrandMark size="lg" />
-        <BrandLockup />
+        <div className="login-title">
+          <h1>RDW</h1>
+          <span>Railway Deployment Watcher</span>
+        </div>
         <p>Watch Railway deployments across selected workspaces from one dashboard.</p>
         <button type="button" className="primary-button" onClick={signIn}>
           <BrandMark size="sm" />

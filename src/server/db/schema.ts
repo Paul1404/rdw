@@ -1,11 +1,11 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: timestamp("email_verified", { mode: "date" }).notNull(),
+  emailVerified: boolean("email_verified").notNull(),
   image: text("image"),
   railwayUserId: text("railway_user_id").unique(),
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),

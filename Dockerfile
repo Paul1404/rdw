@@ -17,6 +17,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/src/server/db ./src/server/db
+COPY --from=builder /app/src/server/logger.server.ts ./src/server/logger.server.ts
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY package.json ./

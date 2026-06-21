@@ -4,6 +4,7 @@ import { genericOAuth } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { db } from "../db/client.server";
 import * as schema from "../db/schema";
+import { errorFields, logger } from "../logger.server";
 
 const railwayScopes = ["openid", "email", "profile", "offline_access", "workspace:viewer"];
 const authBaseUrl = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
@@ -11,6 +12,31 @@ const authBaseUrl = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: authBaseUrl,
+  logger: {
+    level: process.env.LOG_LEVEL === "debug" ? "debug" : "warn",
+    log: (level, message, ...args) => {
+      const fields = {
+        source: "better-auth",
+        message: String(message),
+        args,
+        ...(args.find((arg) => arg instanceof Error) instanceof Error
+          ? errorFields(args.find((arg) => arg instanceof Error))
+          : {}),
+      };
+
+      if (level === "error") {
+        logger.error("auth.error", fields);
+        return;
+      }
+
+      if (level === "warn") {
+        logger.warn("auth.warn", fields);
+        return;
+      }
+
+      logger.debug("auth.debug", fields);
+    },
+  },
   database: drizzleAdapter(db, {
     provider: "pg",
     schema,

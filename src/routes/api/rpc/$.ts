@@ -2,10 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createServerOnlyFn } from "@tanstack/react-start";
 
 const handleRpc = createServerOnlyFn(async (request: Request) => {
-  const [{ RPCHandler }, { onError }, { router }] = await Promise.all([
+  const [{ RPCHandler }, { onError }, { router }, { errorFields, logger }] = await Promise.all([
     import("@orpc/server/fetch"),
     import("@orpc/server"),
     import("../../../server/rpc/router"),
+    import("../../../server/logger.server"),
   ]);
   const handler = new RPCHandler(router, {
     interceptors: [
@@ -24,7 +25,10 @@ const handleRpc = createServerOnlyFn(async (request: Request) => {
           return;
         }
 
-        console.error(error);
+        logger.error("rpc.error", {
+          path: new URL(request.url).pathname,
+          ...errorFields(error),
+        });
       }),
     ],
   });

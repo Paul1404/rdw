@@ -1,4 +1,5 @@
 import { join, normalize } from "node:path";
+import { errorFields, logger } from "./src/server/logger.server";
 
 type StartServer = {
   default: {
@@ -89,14 +90,46 @@ async function serveStatic(request: Request) {
 Bun.serve({
   port,
   async fetch(request, server) {
-    const staticResponse = await serveStatic(request);
+    const startedAt = performance.now();
+    const url = new URL(request.url);
+    const requestId = crypto.randomUUID();
 
-    if (staticResponse) {
-      return staticResponse;
+    try {
+      const staticResponse = await serveStatic(request);
+
+      if (staticResponse) {
+        logger.info("http.request", {
+          requestId,
+          method: request.method,
+          path: url.pathname,
+          status: staticResponse.status,
+          durationMs: Math.round(performance.now() - startedAt),
+          static: true,
+        });
+        return staticResponse;
+      }
+
+      const response = await startServer.default.fetch(request, server);
+      logger.info("http.request", {
+        requestId,
+        method: request.method,
+        path: url.pathname,
+        status: response.status,
+        durationMs: Math.round(performance.now() - startedAt),
+        static: false,
+      });
+      return response;
+    } catch (error) {
+      logger.error("http.error", {
+        requestId,
+        method: request.method,
+        path: url.pathname,
+        durationMs: Math.round(performance.now() - startedAt),
+        ...errorFields(error),
+      });
+      return new Response("Internal Server Error", { status: 500 });
     }
-
-    return startServer.default.fetch(request, server);
   },
 });
 
-console.info(`Server listening on port ${port}`);
+logger.info("server.started", { port });
