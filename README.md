@@ -14,13 +14,13 @@ bun run dev
 Create a Railway OAuth app with this local redirect URI:
 
 ```text
-http://localhost:3000/api/auth/callback/railway
+http://localhost:3000/api/auth/oauth2/callback/railway
 ```
 
 For production, add this redirect URI:
 
 ```text
-https://rdw.pdcd.net/api/auth/callback/railway
+https://rdw.pdcd.net/api/auth/oauth2/callback/railway
 ```
 
 Then set `RAILWAY_OAUTH_CLIENT_ID`, `RAILWAY_OAUTH_CLIENT_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `DATABASE_URL`, and `TOKEN_ENCRYPTION_KEY` in `.env`.

@@ -6,10 +6,11 @@ import { db } from "../db/client.server";
 import * as schema from "../db/schema";
 
 const railwayScopes = ["openid", "email", "profile", "offline_access", "workspace:viewer"];
+const authBaseUrl = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: authBaseUrl,
   database: drizzleAdapter(db, {
     provider: "pg",
     schema,
@@ -32,6 +33,7 @@ export const auth = betterAuth({
           clientId: process.env.RAILWAY_OAUTH_CLIENT_ID ?? "",
           clientSecret: process.env.RAILWAY_OAUTH_CLIENT_SECRET ?? "",
           discoveryUrl: "https://backboard.railway.com/oauth/.well-known/openid-configuration",
+          redirectURI: `${authBaseUrl}/api/auth/oauth2/callback/railway`,
           scopes: railwayScopes,
           prompt: "consent",
           pkce: true,
