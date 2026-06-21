@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RefreshCw, Settings } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { BrandMark } from "../components/brand";
 import { DashboardFilters, type StatusFilter } from "../components/dashboard-filters";
 import { ProjectPanel } from "../components/project-panel";
 import { SummaryStrip } from "../components/summary-strip";
 import { authClient } from "../lib/auth-client";
 import { orpc } from "../lib/orpc";
+import { deploymentActivityTime, sortProjectGroups } from "../shared/railway/status";
 import type { DeploymentStatus, ProjectDeploymentGroup } from "../shared/railway/types";
 
 export const Route = createFileRoute("/")({
@@ -39,31 +40,94 @@ function filterProjects(
 ) {
   const query = search.trim().toLowerCase();
 
-  return projects
-    .map((project) => ({
-      ...project,
-      deployments: project.deployments.filter((deployment) => {
-        if (!statusMatchesFilter(deployment.status, statusFilter)) {
-          return false;
-        }
+  return sortProjectGroups(
+    projects
+      .map((project) => ({
+        ...project,
+        deployments: project.deployments
+          .filter((deployment) => {
+            if (!statusMatchesFilter(deployment.status, statusFilter)) {
+              return false;
+            }
 
-        if (!query) {
-          return true;
-        }
+            if (!query) {
+              return true;
+            }
 
-        return [
-          project.name,
-          deployment.serviceName,
-          deployment.environmentName,
-          deployment.branch,
-          deployment.commitSha,
-          deployment.commitMessage,
-        ]
-          .filter(Boolean)
-          .some((value) => String(value).toLowerCase().includes(query));
-      }),
-    }))
-    .filter((project) => project.deployments.length > 0);
+            return [
+              project.name,
+              deployment.serviceName,
+              deployment.environmentName,
+              deployment.branch,
+              deployment.commitSha,
+              deployment.commitMessage,
+            ]
+              .filter(Boolean)
+              .some((value) => String(value).toLowerCase().includes(query));
+          })
+          .sort((a, b) => deploymentActivityTime(b) - deploymentActivityTime(a)),
+      }))
+      .filter((project) => project.deployments.length > 0),
+  );
+}
+
+function useProjectGridAnimation(projects: ProjectDeploymentGroup[]) {
+  const gridRef = useRef<HTMLElement | null>(null);
+  const positionsRef = useRef<Map<string, DOMRect>>(new Map());
+  const projectOrderKey = projects.map((project) => project.id).join("|");
+
+  useLayoutEffect(() => {
+    void projectOrderKey;
+
+    const grid = gridRef.current;
+
+    if (!grid || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const previousPositions = positionsRef.current;
+    const nextPositions = new Map<string, DOMRect>();
+    const panels = Array.from(grid.querySelectorAll<HTMLElement>("[data-project-id]"));
+
+    for (const panel of panels) {
+      const projectId = panel.dataset.projectId;
+
+      if (!projectId) {
+        continue;
+      }
+
+      const next = panel.getBoundingClientRect();
+      const previous = previousPositions.get(projectId);
+      nextPositions.set(projectId, next);
+
+      if (!previous) {
+        panel.animate([{ opacity: 0.78, transform: "scale(0.985)" }, { opacity: 1 }], {
+          duration: 220,
+          easing: "cubic-bezier(0.2, 0, 0, 1)",
+        });
+        continue;
+      }
+
+      const deltaX = previous.left - next.left;
+      const deltaY = previous.top - next.top;
+
+      if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) {
+        continue;
+      }
+
+      panel.animate(
+        [{ transform: `translate(${deltaX}px, ${deltaY}px)` }, { transform: "translate(0, 0)" }],
+        {
+          duration: 420,
+          easing: "cubic-bezier(0.2, 0, 0, 1)",
+        },
+      );
+    }
+
+    positionsRef.current = nextPositions;
+  }, [projectOrderKey]);
+
+  return gridRef;
 }
 
 function DashboardPage() {
@@ -94,6 +158,7 @@ function DashboardPage() {
     () => filterProjects(dashboardQuery.data?.projects ?? [], search, statusFilter),
     [dashboardQuery.data?.projects, search, statusFilter],
   );
+  const projectGridRef = useProjectGridAnimation(visibleProjects);
 
   async function signOut() {
     await authClient.signOut();
@@ -178,7 +243,7 @@ function DashboardPage() {
           ))}
         </section>
       ) : visibleProjects.length ? (
-        <section className="project-grid">
+        <section className="project-grid" ref={projectGridRef}>
           {visibleProjects.map((project) => (
             <ProjectPanel project={project} key={project.id} />
           ))}

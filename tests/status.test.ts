@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 import { isActiveStatus, isProblemStatus, sortProjectGroups } from "../src/shared/railway/status";
 import type { DeploymentCard, ProjectDeploymentGroup } from "../src/shared/railway/types";
 
-function deployment(status: DeploymentCard["status"], projectId: string): DeploymentCard {
+function deployment(
+  status: DeploymentCard["status"],
+  projectId: string,
+  createdAt = new Date().toISOString(),
+): DeploymentCard {
   return {
     id: `${projectId}-${status}`,
     status,
@@ -14,7 +18,7 @@ function deployment(status: DeploymentCard["status"], projectId: string): Deploy
     projectName: projectId,
     workspaceId: "workspace",
     workspaceName: "Workspace",
-    createdAt: new Date().toISOString(),
+    createdAt,
     railwayUrl: "https://railway.com",
   };
 }
@@ -29,35 +33,35 @@ describe("deployment status helpers", () => {
     expect(isActiveStatus("SUCCESS")).toBe(false);
   });
 
-  it("sorts problem projects before active and successful projects", () => {
+  it("sorts projects by latest deployment activity, then status rank", () => {
     const projects: ProjectDeploymentGroup[] = [
       {
         id: "success",
         name: "Success",
         workspaceId: "w",
         workspaceName: "W",
-        deployments: [deployment("SUCCESS", "success")],
+        deployments: [deployment("SUCCESS", "success", "2026-01-03T00:00:00.000Z")],
       },
       {
         id: "active",
         name: "Active",
         workspaceId: "w",
         workspaceName: "W",
-        deployments: [deployment("DEPLOYING", "active")],
+        deployments: [deployment("DEPLOYING", "active", "2026-01-02T00:00:00.000Z")],
       },
       {
         id: "problem",
         name: "Problem",
         workspaceId: "w",
         workspaceName: "W",
-        deployments: [deployment("FAILED", "problem")],
+        deployments: [deployment("FAILED", "problem", "2026-01-01T00:00:00.000Z")],
       },
     ];
 
     expect(sortProjectGroups(projects).map((project) => project.id)).toEqual([
-      "problem",
-      "active",
       "success",
+      "active",
+      "problem",
     ]);
   });
 });

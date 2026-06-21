@@ -369,6 +369,19 @@ a {
 .project-panel {
   min-height: 180px;
   overflow: hidden;
+  backface-visibility: hidden;
+  box-shadow: 0 0 0 transparent;
+  transform-origin: center;
+  will-change: transform;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.project-panel:hover {
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--line));
+  box-shadow: 0 18px 42px rgb(0 0 0 / 14%);
 }
 
 .project-header {
@@ -701,6 +714,15 @@ a {
 .workspace-list span {
   color: var(--muted);
   font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-panel,
+  .status-active,
+  .skeleton-panel {
+    animation: none;
+    transition: none;
+  }
 }
 
 @media (max-width: 920px) {

@@ -32,8 +32,26 @@ export function statusRank(status: DeploymentStatus) {
   return 3;
 }
 
+export function deploymentActivityTime(deployment: ProjectDeploymentGroup["deployments"][number]) {
+  const timestamp = deployment.updatedAt ?? deployment.createdAt;
+  const time = new Date(timestamp).getTime();
+
+  return Number.isFinite(time) ? time : 0;
+}
+
+export function projectActivityTime(project: ProjectDeploymentGroup) {
+  return Math.max(...project.deployments.map(deploymentActivityTime), 0);
+}
+
 export function sortProjectGroups(projects: ProjectDeploymentGroup[]) {
   return [...projects].sort((a, b) => {
+    const aActivity = projectActivityTime(a);
+    const bActivity = projectActivityTime(b);
+
+    if (aActivity !== bActivity) {
+      return bActivity - aActivity;
+    }
+
     const aRank = Math.min(...a.deployments.map((deployment) => statusRank(deployment.status)), 4);
     const bRank = Math.min(...b.deployments.map((deployment) => statusRank(deployment.status)), 4);
 

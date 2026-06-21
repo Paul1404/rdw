@@ -29,7 +29,7 @@ function shortSha(deployment: DeploymentCard) {
 
 export function ProjectPanel({ project }: { project: ProjectDeploymentGroup }) {
   return (
-    <section className="project-panel">
+    <section className="project-panel" data-project-id={project.id}>
       <header className="project-header">
         <div>
           <h2>{project.name}</h2>
