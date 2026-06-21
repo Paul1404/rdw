@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="rdwIconTitle">
+  <title id="rdwIconTitle">RDW train icon</title>
+  <rect width="64" height="64" rx="12" fill="#6f4bf2"/>
+  <path d="M18 16h28c3.3 0 6 2.7 6 6v18c0 3.3-2.7 6-6 6H18c-3.3 0-6-2.7-6-6V22c0-3.3 2.7-6 6-6Z" fill="#fff"/>
+  <path d="M20 23h24v8H20v-8Zm2 17 5-6h10l5 6H22Z" fill="#121417"/>
+  <circle cx="23" cy="40" r="3" fill="#6f4bf2"/>
+  <circle cx="41" cy="40" r="3" fill="#6f4bf2"/>
+</svg>

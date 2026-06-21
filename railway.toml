@@ -1,0 +1,8 @@
+[deploy]
+healthcheckPath = "/api/health"
+healthcheckTimeout = 100
+startCommand = "bun --bun dist/server/server.js"
+preDeployCommand = "bun run db:migrate:prod"
+
+[variables]
+NODE_ENV = "production"
