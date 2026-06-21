@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="318" height="100" viewBox="0 0 318 100" role="img" aria-label="RDW — Railway Deployment Watcher">
+  <defs>
+    
+  </defs>
+  <g transform="translate(0,12)">
+    <g fill="none" stroke="#4F46E5" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" transform="scale(0.76)">
+      <path d="M32 84 L44.6 36"></path>
+      <path d="M68 84 L55.4 36"></path>
+      <path d="M34.6 74 L65.4 74"></path>
+      <path d="M38.6 59 L61.4 59"></path>
+      <path d="M42.2 45 L57.8 45"></path>
+    </g>
+    <circle cx="38" cy="16.7" r="6.5" fill="#22C55E"></circle>
+  </g>
+  <text class="wm" x="96" y="52">RDW</text>
+  <text class="tg" x="97" y="73">RAILWAY DEPLOYMENT WATCHER</text>
+</svg>

@@ -20,5 +20,6 @@ COPY --from=builder /app/src/server/db ./src/server/db
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY package.json ./
+COPY server.ts ./
 EXPOSE 3000
-CMD ["bun", "--bun", "dist/server/server.js"]
+CMD ["bun", "--bun", "server.ts"]

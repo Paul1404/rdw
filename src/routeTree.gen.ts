@@ -8,107 +8,107 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as DeploymentDeploymentIdRouteImport } from './routes/deployment/$deploymentId'
-import { Route as ApiHealthRouteImport } from './routes/api/health'
-import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc/$'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as rootRouteImport } from "./routes/__root"
+import { Route as SettingsRouteImport } from "./routes/settings"
+import { Route as LoginRouteImport } from "./routes/login"
+import { Route as IndexRouteImport } from "./routes/index"
+import { Route as DeploymentDeploymentIdRouteImport } from "./routes/deployment/$deploymentId"
+import { Route as ApiHealthRouteImport } from "./routes/api/health"
+import { Route as ApiRpcSplatRouteImport } from "./routes/api/rpc/$"
+import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$"
 
 const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+  id: "/settings",
+  path: "/settings",
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+  id: "/login",
+  path: "/login",
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
 } as any)
 const DeploymentDeploymentIdRoute = DeploymentDeploymentIdRouteImport.update({
-  id: '/deployment/$deploymentId',
-  path: '/deployment/$deploymentId',
+  id: "/deployment/$deploymentId",
+  path: "/deployment/$deploymentId",
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
-  id: '/api/health',
-  path: '/api/health',
+  id: "/api/health",
+  path: "/api/health",
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
-  id: '/api/rpc/$',
-  path: '/api/rpc/$',
+  id: "/api/rpc/$",
+  path: "/api/rpc/$",
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
+  id: "/api/auth/$",
+  path: "/api/auth/$",
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/settings': typeof SettingsRoute
-  '/api/health': typeof ApiHealthRoute
-  '/deployment/$deploymentId': typeof DeploymentDeploymentIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
+  "/": typeof IndexRoute
+  "/login": typeof LoginRoute
+  "/settings": typeof SettingsRoute
+  "/api/health": typeof ApiHealthRoute
+  "/deployment/$deploymentId": typeof DeploymentDeploymentIdRoute
+  "/api/auth/$": typeof ApiAuthSplatRoute
+  "/api/rpc/$": typeof ApiRpcSplatRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/settings': typeof SettingsRoute
-  '/api/health': typeof ApiHealthRoute
-  '/deployment/$deploymentId': typeof DeploymentDeploymentIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
+  "/": typeof IndexRoute
+  "/login": typeof LoginRoute
+  "/settings": typeof SettingsRoute
+  "/api/health": typeof ApiHealthRoute
+  "/deployment/$deploymentId": typeof DeploymentDeploymentIdRoute
+  "/api/auth/$": typeof ApiAuthSplatRoute
+  "/api/rpc/$": typeof ApiRpcSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/settings': typeof SettingsRoute
-  '/api/health': typeof ApiHealthRoute
-  '/deployment/$deploymentId': typeof DeploymentDeploymentIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
+  "/": typeof IndexRoute
+  "/login": typeof LoginRoute
+  "/settings": typeof SettingsRoute
+  "/api/health": typeof ApiHealthRoute
+  "/deployment/$deploymentId": typeof DeploymentDeploymentIdRoute
+  "/api/auth/$": typeof ApiAuthSplatRoute
+  "/api/rpc/$": typeof ApiRpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/login'
-    | '/settings'
-    | '/api/health'
-    | '/deployment/$deploymentId'
-    | '/api/auth/$'
-    | '/api/rpc/$'
+    | "/"
+    | "/login"
+    | "/settings"
+    | "/api/health"
+    | "/deployment/$deploymentId"
+    | "/api/auth/$"
+    | "/api/rpc/$"
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/login'
-    | '/settings'
-    | '/api/health'
-    | '/deployment/$deploymentId'
-    | '/api/auth/$'
-    | '/api/rpc/$'
+    | "/"
+    | "/login"
+    | "/settings"
+    | "/api/health"
+    | "/deployment/$deploymentId"
+    | "/api/auth/$"
+    | "/api/rpc/$"
   id:
-    | '__root__'
-    | '/'
-    | '/login'
-    | '/settings'
-    | '/api/health'
-    | '/deployment/$deploymentId'
-    | '/api/auth/$'
-    | '/api/rpc/$'
+    | "__root__"
+    | "/"
+    | "/login"
+    | "/settings"
+    | "/api/health"
+    | "/deployment/$deploymentId"
+    | "/api/auth/$"
+    | "/api/rpc/$"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -121,54 +121,54 @@ export interface RootRouteChildren {
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
+    "/settings": {
+      id: "/settings"
+      path: "/settings"
+      fullPath: "/settings"
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
+    "/login": {
+      id: "/login"
+      path: "/login"
+      fullPath: "/login"
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
+    "/": {
+      id: "/"
+      path: "/"
+      fullPath: "/"
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/deployment/$deploymentId': {
-      id: '/deployment/$deploymentId'
-      path: '/deployment/$deploymentId'
-      fullPath: '/deployment/$deploymentId'
+    "/deployment/$deploymentId": {
+      id: "/deployment/$deploymentId"
+      path: "/deployment/$deploymentId"
+      fullPath: "/deployment/$deploymentId"
       preLoaderRoute: typeof DeploymentDeploymentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/health': {
-      id: '/api/health'
-      path: '/api/health'
-      fullPath: '/api/health'
+    "/api/health": {
+      id: "/api/health"
+      path: "/api/health"
+      fullPath: "/api/health"
       preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/rpc/$': {
-      id: '/api/rpc/$'
-      path: '/api/rpc/$'
-      fullPath: '/api/rpc/$'
+    "/api/rpc/$": {
+      id: "/api/rpc/$"
+      path: "/api/rpc/$"
+      fullPath: "/api/rpc/$"
       preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
+    "/api/auth/$": {
+      id: "/api/auth/$"
+      path: "/api/auth/$"
+      fullPath: "/api/auth/$"
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -187,12 +187,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

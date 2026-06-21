@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { RefreshCw, Settings, TrainFront } from "lucide-react";
+import { RefreshCw, Settings } from "lucide-react";
 import { useMemo, useState } from "react";
+import { BrandMark } from "../components/brand";
 import { DashboardFilters, type StatusFilter } from "../components/dashboard-filters";
 import { ProjectPanel } from "../components/project-panel";
 import { SummaryStrip } from "../components/summary-strip";
@@ -93,7 +94,7 @@ function DashboardPage() {
   if (viewerQuery.error) {
     return (
       <main className="state-page">
-        <TrainFront size={36} />
+        <BrandMark size="lg" />
         <h1>Sign in to RDW</h1>
         <p>Your Railway deployment dashboard needs an active session.</p>
         <Link to="/login" className="primary-button">
@@ -107,9 +108,7 @@ function DashboardPage() {
     <main className="app-shell">
       <header className="topbar">
         <div className="topbar-brand">
-          <div className="brand-mark small">
-            <TrainFront size={18} />
-          </div>
+          <BrandMark size="sm" />
           <div>
             <h1>RDW</h1>
             <p>{viewerQuery.data?.user.email ?? "Loading session"}</p>

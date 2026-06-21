@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRootRoute, HeadContent, Link, Outlet, Scripts } from "@tanstack/react-router";
 import { Settings } from "lucide-react";
 import { useState } from "react";
-import appCss from "../styles/app.css?url";
+import "../styles/app.css";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -16,7 +16,6 @@ export const Route = createRootRoute({
       },
     ],
     links: [
-      { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "icon", href: "/favicon-32.png", sizes: "32x32", type: "image/png" },
       { rel: "icon", href: "/favicon-16.png", sizes: "16x16", type: "image/png" },

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { TrainFront } from "lucide-react";
+import { BrandLockup, BrandMark } from "../components/brand";
 import { authClient, railwayScopes } from "../lib/auth-client";
 
 export const Route = createFileRoute("/login")({
@@ -19,13 +19,11 @@ function LoginPage() {
   return (
     <main className="login-page">
       <section className="login-panel">
-        <div className="brand-mark">
-          <TrainFront size={28} />
-        </div>
-        <h1>RDW</h1>
+        <BrandMark size="lg" />
+        <BrandLockup />
         <p>Watch Railway deployments across selected workspaces from one dashboard.</p>
         <button type="button" className="primary-button" onClick={signIn}>
-          <TrainFront size={18} />
+          <BrandMark size="sm" />
           Sign in with Railway
         </button>
       </section>

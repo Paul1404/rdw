@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, PlugZap, TrainFront } from "lucide-react";
+import { ArrowLeft, PlugZap } from "lucide-react";
+import { BrandMark } from "../components/brand";
 import { authClient, railwayScopes } from "../lib/auth-client";
 import { orpc } from "../lib/orpc";
 
@@ -33,7 +34,7 @@ function SettingsPage() {
   if (viewerQuery.error) {
     return (
       <main className="state-page">
-        <TrainFront size={36} />
+        <BrandMark size="lg" />
         <h1>Sign in required</h1>
         <Link to="/login" className="primary-button">
           Sign in
@@ -77,7 +78,7 @@ function SettingsPage() {
           </div>
         </div>
         <button type="button" className="primary-button" onClick={reconnect}>
-          <TrainFront size={17} />
+          <BrandMark size="sm" />
           Reconnect Railway
         </button>
       </section>

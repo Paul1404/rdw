@@ -8,9 +8,9 @@
   --text: #121417;
   --muted: #687280;
   --line: #dbe1e8;
-  --accent: #6f4bf2;
-  --accent-strong: #5637d8;
-  --green: #12805c;
+  --accent: #4f46e5;
+  --accent-strong: #3f37c9;
+  --green: #168a45;
   --green-bg: #dff7ec;
   --red: #bf1d3a;
   --red-bg: #fde2e7;
@@ -32,9 +32,9 @@
     --text: #f2f5f7;
     --muted: #9aa5b1;
     --line: #2b333b;
-    --accent: #9c82ff;
-    --accent-strong: #b7a7ff;
-    --green: #62d39e;
+    --accent: #818cf8;
+    --accent-strong: #a5b4fc;
+    --green: #22c55e;
     --green-bg: #123526;
     --red: #ff7388;
     --red-bg: #421823;
@@ -121,19 +121,40 @@ a {
   color: var(--muted);
 }
 
-.brand-mark {
-  display: grid;
-  width: 52px;
-  height: 52px;
-  place-items: center;
-  border-radius: var(--radius);
-  background: var(--accent);
-  color: white;
+.brand-asset {
+  display: block;
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 
-.brand-mark.small {
-  width: 34px;
-  height: 34px;
+.brand-mark-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+}
+
+.brand-mark-md {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius);
+}
+
+.brand-mark-lg {
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+}
+
+.brand-lockup {
+  display: block;
+  width: 184px;
+  height: auto;
+}
+
+.primary-button .brand-asset {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
 }
 
 .primary-button,
@@ -154,6 +175,7 @@ a {
 .primary-button {
   background: var(--accent);
   color: white;
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .primary-button:hover {
@@ -465,6 +487,10 @@ a {
   border-radius: var(--radius);
   background: var(--panel);
   text-align: left;
+}
+
+.login-panel .brand-lockup {
+  width: 210px;
 }
 
 .login-panel .primary-button {
