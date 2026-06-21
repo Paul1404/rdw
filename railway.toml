@@ -6,3 +6,4 @@ preDeployCommand = "bun run db:migrate:prod"
 
 [variables]
 NODE_ENV = "production"
+BETTER_AUTH_URL = "https://rdw.pdcd.net"

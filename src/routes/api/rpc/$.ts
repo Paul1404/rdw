@@ -10,6 +10,20 @@ const handleRpc = createServerOnlyFn(async (request: Request) => {
   const handler = new RPCHandler(router, {
     interceptors: [
       onError((error) => {
+        const expectedAuthError = error as {
+          code?: string;
+          message?: string;
+          status?: number;
+        };
+
+        if (
+          expectedAuthError.code === "UNAUTHORIZED" ||
+          expectedAuthError.status === 401 ||
+          expectedAuthError.message === "Sign in before using RDW"
+        ) {
+          return;
+        }
+
         console.error(error);
       }),
     ],

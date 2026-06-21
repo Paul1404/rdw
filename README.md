@@ -17,6 +17,12 @@ Create a Railway OAuth app with this local redirect URI:
 http://localhost:3000/api/auth/callback/railway
 ```
 
+For production, add this redirect URI:
+
+```text
+https://rdw.pdcd.net/api/auth/callback/railway
+```
+
 Then set `RAILWAY_OAUTH_CLIENT_ID`, `RAILWAY_OAUTH_CLIENT_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `DATABASE_URL`, and `TOKEN_ENCRYPTION_KEY` in `.env`.
 
 Generate a 32-byte base64 encryption key with:
