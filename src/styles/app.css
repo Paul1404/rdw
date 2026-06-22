@@ -215,27 +215,41 @@ a {
   background: var(--panel-strong);
 }
 
-.live-pill {
+.live-status {
   display: inline-flex;
   align-items: center;
   min-height: 38px;
-  gap: 8px;
-  padding: 0 12px;
-  border: 1px solid color-mix(in srgb, var(--green) 34%, var(--line));
+  gap: 9px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--green-bg) 52%, var(--panel));
-  color: var(--green);
-  font-size: 13px;
-  font-weight: 700;
+  background: color-mix(in srgb, var(--panel-strong) 72%, transparent);
   white-space: nowrap;
 }
 
-.live-pill span {
+.live-dot {
   width: 8px;
   height: 8px;
+  flex: 0 0 auto;
   border-radius: 999px;
   background: var(--green);
   box-shadow: 0 0 0 5px color-mix(in srgb, var(--green) 16%, transparent);
+}
+
+.live-status > span:last-child {
+  display: grid;
+  gap: 1px;
+  line-height: 1;
+}
+
+.live-status strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.live-status small {
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .sync-time {
@@ -417,6 +431,12 @@ a {
   border-bottom: 1px solid var(--line);
 }
 
+.deployment-row-active {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--blue) 20%, transparent), transparent 34%),
+    color-mix(in srgb, var(--blue-bg) 26%, transparent);
+}
+
 .deployment-row:last-child {
   border-bottom: 0;
 }
@@ -457,6 +477,15 @@ a {
 .deployment-meta a {
   display: inline-flex;
   align-items: center;
+}
+
+.deployment-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
 }
 
 .commit-message {

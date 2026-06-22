@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RefreshCw, Settings } from "lucide-react";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { BrandMark } from "../components/brand";
 import { DashboardFilters, type StatusFilter } from "../components/dashboard-filters";
 import { ProjectPanel } from "../components/project-panel";
@@ -9,13 +9,30 @@ import { SummaryStrip } from "../components/summary-strip";
 import { authClient } from "../lib/auth-client";
 import { orpc } from "../lib/orpc";
 import { deploymentActivityTime, sortProjectGroups } from "../shared/railway/status";
-import type { DeploymentStatus, ProjectDeploymentGroup } from "../shared/railway/types";
+import type {
+  DashboardResponse,
+  DeploymentStatus,
+  ProjectDeploymentGroup,
+} from "../shared/railway/types";
 
 export const Route = createFileRoute("/")({
   component: DashboardPage,
 });
 
-const livePollMs = 5_000;
+const streamFallbackPollMs = 20_000;
+
+function useClock(intervalMs = 1_000) {
+  const [now, setNow] = useState(0);
+
+  useEffect(() => {
+    setNow(Date.now());
+    const interval = window.setInterval(() => setNow(Date.now()), intervalMs);
+
+    return () => window.clearInterval(interval);
+  }, [intervalMs]);
+
+  return now;
+}
 
 function statusMatchesFilter(status: DeploymentStatus, filter: StatusFilter) {
   if (filter === "active") {
@@ -130,10 +147,28 @@ function useProjectGridAnimation(projects: ProjectDeploymentGroup[]) {
   return gridRef;
 }
 
+function dashboardQueryKey(selectedWorkspace: string) {
+  return ["railway", "dashboard", selectedWorkspace] as const;
+}
+
+function dashboardStreamUrl(selectedWorkspace: string) {
+  const params = new URLSearchParams();
+
+  if (selectedWorkspace) {
+    params.set("workspaceId", selectedWorkspace);
+  }
+
+  const query = params.toString();
+  return query ? `/api/stream/dashboard?${query}` : "/api/stream/dashboard";
+}
+
 function DashboardPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
+  const [streamState, setStreamState] = useState<"connecting" | "live" | "fallback">("connecting");
+  const now = useClock();
+  const queryClient = useQueryClient();
 
   const viewerQuery = useQuery({
     queryKey: ["viewer", "me"],
@@ -142,17 +177,44 @@ function DashboardPage() {
   });
 
   const dashboardQuery = useQuery({
-    queryKey: ["railway", "dashboard", selectedWorkspace],
+    queryKey: dashboardQueryKey(selectedWorkspace),
     queryFn: () =>
       orpc.railway.dashboard({
         workspaceIds: selectedWorkspace ? [selectedWorkspace] : undefined,
       }),
     enabled: viewerQuery.isSuccess,
     staleTime: 2_000,
-    refetchInterval: (query) => (query.state.error ? false : livePollMs),
+    refetchInterval: (query) =>
+      streamState === "fallback" && !query.state.error ? streamFallbackPollMs : false,
     refetchIntervalInBackground: false,
     retry: 1,
   });
+
+  useEffect(() => {
+    if (!viewerQuery.isSuccess || typeof EventSource === "undefined") {
+      return;
+    }
+
+    setStreamState("connecting");
+    const eventSource = new EventSource(dashboardStreamUrl(selectedWorkspace), {
+      withCredentials: true,
+    });
+
+    eventSource.addEventListener("open", () => setStreamState("live"));
+    eventSource.addEventListener("dashboard", (event) => {
+      setStreamState("live");
+      queryClient.setQueryData(
+        dashboardQueryKey(selectedWorkspace),
+        JSON.parse((event as MessageEvent).data) as DashboardResponse,
+      );
+    });
+    eventSource.addEventListener("error", () => {
+      setStreamState("fallback");
+      eventSource.close();
+    });
+
+    return () => eventSource.close();
+  }, [queryClient, selectedWorkspace, viewerQuery.isSuccess]);
 
   const visibleProjects = useMemo(
     () => filterProjects(dashboardQuery.data?.projects ?? [], search, statusFilter),
@@ -197,9 +259,26 @@ function DashboardPage() {
           </div>
         </div>
         <div className="topbar-actions">
-          <span className="live-pill" title="Refreshes every 5 seconds while this tab is visible">
-            <span />
-            Live 5s
+          <span className="live-status" title="Updates while this tab is visible">
+            <span className="live-dot" />
+            <span>
+              <strong>
+                {streamState === "fallback"
+                  ? dashboardQuery.isFetching
+                    ? "Syncing"
+                    : "Polling"
+                  : streamState === "connecting"
+                    ? "Connecting"
+                    : "Live"}
+              </strong>
+              <small>
+                {streamState === "fallback"
+                  ? dashboardQuery.isFetching
+                    ? "now"
+                    : "fallback"
+                  : "stream"}
+              </small>
+            </span>
           </span>
           {fetchedAt ? <span className="sync-time">Updated {fetchedAt}</span> : null}
           <button type="button" className="icon-button" onClick={() => dashboardQuery.refetch()}>
@@ -245,7 +324,7 @@ function DashboardPage() {
       ) : visibleProjects.length ? (
         <section className="project-grid" ref={projectGridRef}>
           {visibleProjects.map((project) => (
-            <ProjectPanel project={project} key={project.id} />
+            <ProjectPanel now={now} project={project} key={project.id} />
           ))}
         </section>
       ) : (
