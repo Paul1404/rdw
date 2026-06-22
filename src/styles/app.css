@@ -218,44 +218,25 @@ a {
 .live-status {
   display: inline-flex;
   align-items: center;
-  min-height: 38px;
-  gap: 9px;
-  padding: 0 11px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--panel-strong) 72%, transparent);
+  min-height: 34px;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--green) 24%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--green-bg) 30%, transparent);
+  color: color-mix(in srgb, var(--green) 82%, white);
+  font-size: 13px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
 .live-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   flex: 0 0 auto;
   border-radius: 999px;
   background: var(--green);
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--green) 16%, transparent);
-}
-
-.live-status > span:last-child {
-  display: grid;
-  gap: 1px;
-  line-height: 1;
-}
-
-.live-status strong {
-  color: var(--text);
-  font-size: 13px;
-}
-
-.live-status small {
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.sync-time {
-  color: var(--muted);
-  font-size: 12px;
-  white-space: nowrap;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 13%, transparent);
 }
 
 .settings-link {

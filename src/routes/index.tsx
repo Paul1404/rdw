@@ -227,14 +227,6 @@ function DashboardPage() {
     window.location.href = "/login";
   }
 
-  const fetchedAt = dashboardQuery.data?.fetchedAt
-    ? new Date(dashboardQuery.data.fetchedAt).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      })
-    : null;
-
   if (viewerQuery.error) {
     return (
       <main className="state-page">
@@ -261,26 +253,14 @@ function DashboardPage() {
         <div className="topbar-actions">
           <span className="live-status" title="Updates while this tab is visible">
             <span className="live-dot" />
-            <span>
-              <strong>
-                {streamState === "fallback"
-                  ? dashboardQuery.isFetching
-                    ? "Syncing"
-                    : "Polling"
-                  : streamState === "connecting"
-                    ? "Connecting"
-                    : "Live"}
-              </strong>
-              <small>
-                {streamState === "fallback"
-                  ? dashboardQuery.isFetching
-                    ? "now"
-                    : "fallback"
-                  : "stream"}
-              </small>
-            </span>
+            {streamState === "fallback"
+              ? dashboardQuery.isFetching
+                ? "Syncing"
+                : "Fallback"
+              : streamState === "connecting"
+                ? "Connecting"
+                : "Live"}
           </span>
-          {fetchedAt ? <span className="sync-time">Updated {fetchedAt}</span> : null}
           <button type="button" className="icon-button" onClick={() => dashboardQuery.refetch()}>
             <RefreshCw size={17} />
             Refresh
