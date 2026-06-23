@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { RefreshCw, Settings } from "lucide-react";
+import { LogOut, RefreshCw, Settings } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { BrandMark } from "../components/brand";
 import { DashboardFilters, type StatusFilter } from "../components/dashboard-filters";
@@ -270,6 +270,7 @@ function DashboardPage() {
             Settings
           </Link>
           <button type="button" className="ghost-button" onClick={signOut}>
+            <LogOut size={17} />
             Sign out
           </button>
         </div>

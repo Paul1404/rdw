@@ -8,12 +8,21 @@ export const activeStatuses = new Set<DeploymentStatus>([
   "WAITING",
 ]);
 
+// Statuses Railway sets automatically without a new push or deploy. Their
+// updatedAt timestamp must not count as activity, otherwise a service going
+// idle would bump its project to the top of the dashboard.
+export const passiveStatuses = new Set<DeploymentStatus>(["SLEEPING", "REMOVED"]);
+
 export function isProblemStatus(status: DeploymentStatus) {
   return problemStatuses.has(status);
 }
 
 export function isActiveStatus(status: DeploymentStatus) {
   return activeStatuses.has(status);
+}
+
+export function isPassiveStatus(status: DeploymentStatus) {
+  return passiveStatuses.has(status);
 }
 
 export function statusRank(status: DeploymentStatus) {
@@ -33,7 +42,11 @@ export function statusRank(status: DeploymentStatus) {
 }
 
 export function deploymentActivityTime(deployment: ProjectDeploymentGroup["deployments"][number]) {
-  const timestamp = deployment.updatedAt ?? deployment.createdAt;
+  // Sleeping or removed deployments fall back to createdAt so an automatic
+  // idle transition never registers as fresh activity.
+  const timestamp = isPassiveStatus(deployment.status)
+    ? deployment.createdAt
+    : (deployment.updatedAt ?? deployment.createdAt);
   const time = new Date(timestamp).getTime();
 
   return Number.isFinite(time) ? time : 0;

@@ -6,6 +6,7 @@ function deployment(
   status: DeploymentCard["status"],
   projectId: string,
   createdAt = new Date().toISOString(),
+  updatedAt?: string,
 ): DeploymentCard {
   return {
     id: `${projectId}-${status}`,
@@ -19,8 +20,13 @@ function deployment(
     workspaceId: "workspace",
     workspaceName: "Workspace",
     createdAt,
+    updatedAt,
     railwayUrl: "https://railway.com",
   };
+}
+
+function project(id: string, deployments: DeploymentCard[]): ProjectDeploymentGroup {
+  return { id, name: id, workspaceId: "w", workspaceName: "W", deployments };
 }
 
 describe("deployment status helpers", () => {
@@ -58,10 +64,24 @@ describe("deployment status helpers", () => {
       },
     ];
 
-    expect(sortProjectGroups(projects).map((project) => project.id)).toEqual([
+    expect(sortProjectGroups(projects).map((group) => group.id)).toEqual([
       "success",
       "active",
       "problem",
     ]);
+  });
+
+  it("does not let a freshly slept deployment bump its project to the top", () => {
+    const projects: ProjectDeploymentGroup[] = [
+      project("recent", [
+        deployment("SUCCESS", "recent", "2026-01-02T00:00:00.000Z", "2026-01-02T00:05:00.000Z"),
+      ]),
+      // Deployed earlier, but Railway just touched updatedAt by putting it to sleep.
+      project("slept", [
+        deployment("SLEEPING", "slept", "2026-01-01T00:00:00.000Z", "2026-01-03T00:00:00.000Z"),
+      ]),
+    ];
+
+    expect(sortProjectGroups(projects).map((group) => group.id)).toEqual(["recent", "slept"]);
   });
 });

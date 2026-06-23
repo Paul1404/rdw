@@ -83,7 +83,9 @@ export function ProjectPanel({ now, project }: { now: number; project: ProjectDe
                     {elapsedTime(deployment.createdAt, now)}
                   </span>
                 ) : (
-                  <span>{relativeAge(deployment.createdAt, now)}</span>
+                  <span title={new Date(deployment.createdAt).toLocaleString()}>
+                    {relativeAge(deployment.createdAt, now)}
+                  </span>
                 )}
                 <a
                   href={deployment.railwayUrl}
