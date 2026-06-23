@@ -119,21 +119,23 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 18px;
   padding: 14px 0;
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  backdrop-filter: saturate(140%) blur(14px);
-  -webkit-backdrop-filter: saturate(140%) blur(14px);
 }
 
 .topbar::after,
 .detail-header::after {
   content: "";
   position: absolute;
-  inset-inline: -24px;
+  top: 0;
   bottom: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+  left: calc(50% - 50vw);
+  z-index: -1;
+  width: 100vw;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border-bottom: 1px solid var(--line);
 }
 
 .topbar-brand,
