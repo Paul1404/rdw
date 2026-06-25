@@ -39,36 +39,50 @@ describe("deployment status helpers", () => {
     expect(isActiveStatus("SUCCESS")).toBe(false);
   });
 
-  it("sorts projects by latest deployment activity, then status rank", () => {
+  it("puts deployed projects in front, then problems, then active", () => {
     const projects: ProjectDeploymentGroup[] = [
-      {
-        id: "success",
-        name: "Success",
-        workspaceId: "w",
-        workspaceName: "W",
-        deployments: [deployment("SUCCESS", "success", "2026-01-03T00:00:00.000Z")],
-      },
       {
         id: "active",
         name: "Active",
         workspaceId: "w",
         workspaceName: "W",
-        deployments: [deployment("DEPLOYING", "active", "2026-01-02T00:00:00.000Z")],
+        deployments: [deployment("DEPLOYING", "active", "2026-01-03T00:00:00.000Z")],
       },
       {
         id: "problem",
         name: "Problem",
         workspaceId: "w",
         workspaceName: "W",
-        deployments: [deployment("FAILED", "problem", "2026-01-01T00:00:00.000Z")],
+        deployments: [deployment("FAILED", "problem", "2026-01-02T00:00:00.000Z")],
+      },
+      {
+        id: "success",
+        name: "Success",
+        workspaceId: "w",
+        workspaceName: "W",
+        deployments: [deployment("SUCCESS", "success", "2026-01-01T00:00:00.000Z")],
       },
     ];
 
+    // The deployed project leads even though it has the oldest activity.
     expect(sortProjectGroups(projects).map((group) => group.id)).toEqual([
       "success",
-      "active",
       "problem",
+      "active",
     ]);
+  });
+
+  it("orders deployed projects by most recent deploy first", () => {
+    const projects: ProjectDeploymentGroup[] = [
+      project("older", [
+        deployment("SUCCESS", "older", "2026-01-01T00:00:00.000Z", "2026-01-01T00:05:00.000Z"),
+      ]),
+      project("newer", [
+        deployment("SUCCESS", "newer", "2026-01-02T00:00:00.000Z", "2026-01-02T00:05:00.000Z"),
+      ]),
+    ];
+
+    expect(sortProjectGroups(projects).map((group) => group.id)).toEqual(["newer", "older"]);
   });
 
   it("does not let a freshly slept deployment bump its project to the top", () => {

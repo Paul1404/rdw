@@ -8,7 +8,7 @@ import { ProjectPanel } from "../components/project-panel";
 import { SummaryStrip } from "../components/summary-strip";
 import { authClient } from "../lib/auth-client";
 import { orpc } from "../lib/orpc";
-import { deploymentActivityTime, sortProjectGroups } from "../shared/railway/status";
+import { deploymentActivityTime, sortProjectGroups, statusRank } from "../shared/railway/status";
 import type {
   DashboardResponse,
   DeploymentStatus,
@@ -82,7 +82,15 @@ function filterProjects(
               .filter(Boolean)
               .some((value) => String(value).toLowerCase().includes(query));
           })
-          .sort((a, b) => deploymentActivityTime(b) - deploymentActivityTime(a)),
+          .sort((a, b) => {
+            const rankDiff = statusRank(a.status) - statusRank(b.status);
+
+            if (rankDiff !== 0) {
+              return rankDiff;
+            }
+
+            return deploymentActivityTime(b) - deploymentActivityTime(a);
+          }),
       }))
       .filter((project) => project.deployments.length > 0),
   );

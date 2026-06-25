@@ -26,15 +26,16 @@ export function isPassiveStatus(status: DeploymentStatus) {
 }
 
 export function statusRank(status: DeploymentStatus) {
-  if (isProblemStatus(status)) {
+  // Deployed (SUCCESS) always leads. Everything else trails behind it.
+  if (status === "SUCCESS") {
     return 0;
   }
 
-  if (isActiveStatus(status)) {
+  if (isProblemStatus(status)) {
     return 1;
   }
 
-  if (status === "SUCCESS") {
+  if (isActiveStatus(status)) {
     return 2;
   }
 
@@ -56,20 +57,26 @@ export function projectActivityTime(project: ProjectDeploymentGroup) {
   return Math.max(...project.deployments.map(deploymentActivityTime), 0);
 }
 
+export function projectStatusRank(project: ProjectDeploymentGroup) {
+  return Math.min(...project.deployments.map((deployment) => statusRank(deployment.status)), 4);
+}
+
 export function sortProjectGroups(projects: ProjectDeploymentGroup[]) {
   return [...projects].sort((a, b) => {
+    // Deployed projects lead, then problems, active, and idle. This keeps the
+    // most recently deployed work in front regardless of background churn.
+    const aRank = projectStatusRank(a);
+    const bRank = projectStatusRank(b);
+
+    if (aRank !== bRank) {
+      return aRank - bRank;
+    }
+
     const aActivity = projectActivityTime(a);
     const bActivity = projectActivityTime(b);
 
     if (aActivity !== bActivity) {
       return bActivity - aActivity;
-    }
-
-    const aRank = Math.min(...a.deployments.map((deployment) => statusRank(deployment.status)), 4);
-    const bRank = Math.min(...b.deployments.map((deployment) => statusRank(deployment.status)), 4);
-
-    if (aRank !== bRank) {
-      return aRank - bRank;
     }
 
     return a.name.localeCompare(b.name);

@@ -689,6 +689,45 @@ a {
   font-weight: 700;
 }
 
+.deployment-meta > span.deployment-duration {
+  color: color-mix(in srgb, var(--green) 90%, var(--text));
+  background: color-mix(in srgb, var(--green-bg) 48%, transparent);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.deployment-meta > span.deployment-fresh {
+  color: var(--green);
+  background: color-mix(in srgb, var(--green-bg) 72%, transparent);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.deployment-age {
+  font-variant-numeric: tabular-nums;
+}
+
+.deployment-row-fresh {
+  box-shadow: inset 3px 0 0 var(--green);
+  animation: deployment-fresh-in 1.8s ease;
+}
+
+@keyframes deployment-fresh-in {
+  from {
+    background: color-mix(in srgb, var(--green-bg) 55%, transparent);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deployment-row-fresh {
+    animation: none;
+  }
+}
+
 .commit-message {
   margin: 10px 0 0;
   color: var(--muted);
