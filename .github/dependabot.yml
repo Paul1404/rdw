@@ -1,12 +1,32 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "sunday"
       time: "08:00"
       timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    groups:
+      orpc:
+        patterns:
+          - "@orpc/*"
+      react:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+      vite:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:

@@ -9,18 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root"
-import { Route as SettingsRouteImport } from "./routes/settings"
-import { Route as LoginRouteImport } from "./routes/login"
 import { Route as IndexRouteImport } from "./routes/index"
-import { Route as DeploymentDeploymentIdRouteImport } from "./routes/deployment/$deploymentId"
+import { Route as LoginRouteImport } from "./routes/login"
+import { Route as SettingsRouteImport } from "./routes/settings"
 import { Route as ApiHealthRouteImport } from "./routes/api/health"
-import { Route as ApiStreamDashboardRouteImport } from "./routes/api/stream/dashboard"
-import { Route as ApiRpcSplatRouteImport } from "./routes/api/rpc/$"
+import { Route as DeploymentDeploymentIdRouteImport } from "./routes/deployment/$deploymentId"
 import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$"
+import { Route as ApiRpcSplatRouteImport } from "./routes/api/rpc/$"
+import { Route as ApiStreamDashboardRouteImport } from "./routes/api/stream/dashboard"
 
-const SettingsRoute = SettingsRouteImport.update({
-  id: "/settings",
-  path: "/settings",
+const IndexRoute = IndexRouteImport.update({
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -28,14 +28,9 @@ const LoginRoute = LoginRouteImport.update({
   path: "/login",
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DeploymentDeploymentIdRoute = DeploymentDeploymentIdRouteImport.update({
-  id: "/deployment/$deploymentId",
-  path: "/deployment/$deploymentId",
+const SettingsRoute = SettingsRouteImport.update({
+  id: "/settings",
+  path: "/settings",
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -43,9 +38,14 @@ const ApiHealthRoute = ApiHealthRouteImport.update({
   path: "/api/health",
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiStreamDashboardRoute = ApiStreamDashboardRouteImport.update({
-  id: "/api/stream/dashboard",
-  path: "/api/stream/dashboard",
+const DeploymentDeploymentIdRoute = DeploymentDeploymentIdRouteImport.update({
+  id: "/deployment/$deploymentId",
+  path: "/deployment/$deploymentId",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: "/api/auth/$",
+  path: "/api/auth/$",
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
@@ -53,9 +53,9 @@ const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   path: "/api/rpc/$",
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: "/api/auth/$",
-  path: "/api/auth/$",
+const ApiStreamDashboardRoute = ApiStreamDashboardRouteImport.update({
+  id: "/api/stream/dashboard",
+  path: "/api/stream/dashboard",
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -136,11 +136,11 @@ export interface RootRouteChildren {
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    "/settings": {
-      id: "/settings"
-      path: "/settings"
-      fullPath: "/settings"
-      preLoaderRoute: typeof SettingsRouteImport
+    "/": {
+      id: "/"
+      path: "/"
+      fullPath: "/"
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/login": {
@@ -150,18 +150,11 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/": {
-      id: "/"
-      path: "/"
-      fullPath: "/"
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    "/deployment/$deploymentId": {
-      id: "/deployment/$deploymentId"
-      path: "/deployment/$deploymentId"
-      fullPath: "/deployment/$deploymentId"
-      preLoaderRoute: typeof DeploymentDeploymentIdRouteImport
+    "/settings": {
+      id: "/settings"
+      path: "/settings"
+      fullPath: "/settings"
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/api/health": {
@@ -171,11 +164,18 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/api/stream/dashboard": {
-      id: "/api/stream/dashboard"
-      path: "/api/stream/dashboard"
-      fullPath: "/api/stream/dashboard"
-      preLoaderRoute: typeof ApiStreamDashboardRouteImport
+    "/deployment/$deploymentId": {
+      id: "/deployment/$deploymentId"
+      path: "/deployment/$deploymentId"
+      fullPath: "/deployment/$deploymentId"
+      preLoaderRoute: typeof DeploymentDeploymentIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/api/auth/$": {
+      id: "/api/auth/$"
+      path: "/api/auth/$"
+      fullPath: "/api/auth/$"
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/api/rpc/$": {
@@ -185,11 +185,11 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/api/auth/$": {
-      id: "/api/auth/$"
-      path: "/api/auth/$"
-      fullPath: "/api/auth/$"
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
+    "/api/stream/dashboard": {
+      id: "/api/stream/dashboard"
+      path: "/api/stream/dashboard"
+      fullPath: "/api/stream/dashboard"
+      preLoaderRoute: typeof ApiStreamDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
