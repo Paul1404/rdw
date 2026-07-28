@@ -1,6 +1,7 @@
 [deploy]
 healthcheckPath = "/api/health"
 healthcheckTimeout = 100
+sleepApplication = true
 startCommand = "bun --bun server.ts"
 preDeployCommand = "bun run db:migrate:prod"
 

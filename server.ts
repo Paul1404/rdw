@@ -1,4 +1,5 @@
 import { join, normalize } from "node:path";
+import { ensureDatabaseReady } from "./src/server/db/client.server";
 import { errorFields, logger } from "./src/server/logger.server";
 
 type StartServer = {
@@ -107,6 +108,25 @@ Bun.serve({
           static: true,
         });
         return staticResponse;
+      }
+
+      if (url.pathname !== "/api/health" && !(await ensureDatabaseReady())) {
+        const response = new Response("Service is waking up. Please retry.", {
+          status: 503,
+          headers: {
+            "Cache-Control": "no-store",
+            "Retry-After": "2",
+          },
+        });
+        logger.info("http.request", {
+          requestId,
+          method: request.method,
+          path: url.pathname,
+          status: response.status,
+          durationMs: Math.round(performance.now() - startedAt),
+          databaseWakePending: true,
+        });
+        return response;
       }
 
       const response = await startServer.default.fetch(request, server);
