@@ -16,9 +16,9 @@
     "icons": "bun run scripts/generate-icons.ts"
   },
   "dependencies": {
-    "@orpc/client": "1.14.8",
-    "@orpc/server": "1.14.8",
-    "@orpc/tanstack-query": "1.14.8",
+    "@orpc/client": "1.14.13",
+    "@orpc/server": "1.14.13",
+    "@orpc/tanstack-query": "1.14.13",
     "@tailwindcss/vite": "4.3.3",
     "@tanstack/query-core": "5.101.3",
     "@tanstack/react-query": "5.101.3",
