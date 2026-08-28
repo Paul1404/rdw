@@ -27,6 +27,12 @@ updates:
         patterns:
           - "vite"
           - "@vitejs/*"
+    ignore:
+      # Better Auth 1.7 removes the Generic OAuth client API and changes the
+      # callback path used by the registered Railway OAuth application.
+      - dependency-name: "better-auth"
+        versions:
+          - ">= 1.7.0, < 2.0.0"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
